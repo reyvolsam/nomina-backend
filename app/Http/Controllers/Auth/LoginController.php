@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 use Validator;
 use Auth;
@@ -61,8 +63,7 @@ class LoginController extends Controller
 
             $validator = Validator::make($this->request->all(), [
                             'email'         => 'required|max:255',
-                            'password'      => 'required',
-                            'remember_me'   => 'boolean',
+                            'password'      => 'required'
             ], $messages);
 
             $usr = User::where('email', 'LIKE', $this->request->input('email'))->first();

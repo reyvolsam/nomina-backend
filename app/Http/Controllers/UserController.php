@@ -74,7 +74,6 @@ class UserController extends Controller
             $validator = Validator::make($this->request->all(), [
                 'name'              => 'required|max:255',
                 'email'             => 'required|max:255|email',
-                'campus_id'         => 'required',
                 'group_id'          => 'required'
             ]);
 
@@ -169,7 +168,6 @@ class UserController extends Controller
                 $validator = Validator::make($this->request->all(), [
                     'name'              => 'required|max:255',
                     'email'             => 'required|max:255|email',
-                    'campus_id'         => 'required',
                     'group_id'          => 'required'
                 ]);
 

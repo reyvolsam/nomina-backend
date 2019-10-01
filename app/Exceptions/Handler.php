@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Auth\AuthenticationException;
 
 class Handler extends ExceptionHandler
 {
@@ -47,5 +48,14 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         return parent::render($request, $exception);
-    }
+        return response()->json(
+            [
+                'errors' => [
+                    'status' => 401,
+                    'message' => 'No Autorizado',
+                ]
+            ], 401
+        );
+    }//
+
 }
