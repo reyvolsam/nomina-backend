@@ -1,16 +1,16 @@
 <?php
 
 namespace App\Http\Controllers\Catalogs;
-use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
-use App\Department;
-use App\Company;
-use App\JobCompany;
-use App\CompanyUser;
+use App\Http\Controllers\Controller;
+
+use App\ContractTypes;
+use App\Worker;
+
 use Validator;
 
-class CompanyController extends Controller
+class ContractTypesController extends Controller
 {
     private $res = [];
     private $request;
@@ -32,17 +32,16 @@ class CompanyController extends Controller
     public function index()
     {
         try{
-            $companies_list = [];
-            $companies_list = Company::all();
+            $contract_type_list = [];
+            $contract_type_list = ContractTypes::all();
 
-
-            if(count($companies_list) > 0){
-                foreach ($companies_list as $kc => $vc) $vc->loader = false;
-                $this->res['message'] = 'Lista de Empresas obtenida correctamente.';
-                $this->res['data'] = $companies_list;
+            if(count($contract_type_list) > 0){
+                foreach ($contract_type_list as $kc => $vc) $vc->loader = false;
+                $this->res['message'] = 'Lista de Tipos de Contratos obtenida correctamente.';
+                $this->res['data'] = $contract_type_list;
                 $this->status_code = 200;
             } else {
-                $this->res['message'] = 'No hay Empresas registradas hasta el momento.';
+                $this->res['message'] = 'No hay Contratos registrados hasta el momento.';
                 $this->status_code = 201;
             }
         } catch(\Exception $e){
@@ -73,36 +72,33 @@ class CompanyController extends Controller
         try{
             $validator = Validator::make($this->request->all(), [
                 'name'          => 'required|max:255',
-                'contact'       => 'required|max:255',
-                'rfc'           => 'required|max:13',
-                'telephone'     => 'required|max:20'
             ]);
 
             if(!$validator->fails()) {
                 $name = $this->request->input('name');
 
-                $company_repeated = Company::where('name', $name)->count();
-                if($company_repeated == 0){
-                    $company_trash = Company::withTrashed()->where('name', $name)->count();
+                $contract_types_repeated = ContractTypes::where('name', $name)->count();
+                if($contract_types_repeated == 0){
+                    $contract_types_trash = ContractTypes::withTrashed()->where('name', $name)->count();
 
-                    if($company_trash == 0){
-                        $company = new Company;
-                        $company->create($this->request->all());
+                    if($contract_types_trash == 0){
+                        $contract_types = new ContractTypes;
+                        $contract_types->create($this->request->all());
 
-                        $this->res['message'] = 'Empresa creada correctamente.';
+                        $this->res['message'] = 'Tipo de Contrado creado correctamente.';
                         $this->status_code = 200;
                     } else {
-                        Company::withTrashed()->where('name', $name)->restore();
+                        ContractTypes::withTrashed()->where('name', $name)->restore();
 
-                        $company = Company::where('name', $name)->first();
+                        $contract_types = ContractTypes::where('name', $name)->first();
 
-                        $company->updateOrCreate(['id' => $company->id], $this->request->all());
+                        $contract_types->updateOrCreate(['id' => $contract_types->id], $this->request->all());
 
-                        $this->res['message'] = 'Empresa restaurado correctamente.';
+                        $this->res['message'] = 'Tipo de Contrato restaurado correctamente.';
                         $this->status_code = 422;
                     }
                 } else {
-                    $this->res['message'] = 'La Empresa ya existe.';
+                    $this->res['message'] = 'El Tipo de Contrato ya existe.';
                     $this->status_code = 423;
                 }
             } else {
@@ -151,20 +147,17 @@ class CompanyController extends Controller
         try{
             if(is_numeric($id)){
                 $validator = Validator::make($this->request->all(), [
-                    'name'          => 'required|max:255',
-                    'contact'       => 'required|max:255',
-                    'rfc'           => 'required|max:13',
-                    'telephone'     => 'required|max:20'
+                    'name'          => 'required|max:255'
                 ]);
 
                 if(!$validator->fails()) {
-                    $company_exist = Company::find($id);
-                    if($company_exist){
-                        Company::updateOrCreate(['id' => $id], $this->request->all());
-                        $this->res['message'] = 'Empresa actualizada correctamente.';
+                    $contract_types_exist = ContractTypes::find($id);
+                    if($contract_types_exist){
+                        ContractTypes::updateOrCreate(['id' => $id], $this->request->all());
+                        $this->res['message'] = 'Tipo de Contrato actualizado correctamente.';
                         $this->status_code = 200;
                     } else {
-                        $this->res['message'] = 'La Empresa no existe.';
+                        $this->res['message'] = 'El Tipo de Contrato no existe.';
                         $this->status_code = 422;
                     }
                 } else {
@@ -193,26 +186,15 @@ class CompanyController extends Controller
     {
         try{
             if(is_numeric($id)){
+                $exist_worker = Worker::where('contract_type_id', $id)->count();
 
-                $exist_company_department = Department::where('company_id', $id)->count();
-
-                $exist_company_user = CompanyUser::where('company_id', $id)->count();
-
-                $exist_company_job = JobCompany::where('company_id', $id)->count();
-
-                if($exist_company_department == 0 && $exist_company_user == 0 && $exist_company_job == 0){
-                    $company = Company::find($id);
-
-                    if($company){
-                        $company->delete();
-                        $this->res['message'] = 'Empresa eliminada correctamente.';
-                        $this->status_code = 200;
-                    } else {
-                        $this->res['message'] = 'La Empresa no existe.';
-                        $this->status_code = 422;
-                    }
+                if($exist_worker == 0){
+                    $ContractTypes = ContractTypes::find($id);
+                    $ContractTypes->delete();
+                    $this->res['message'] = 'Tipo de Contrato eliminado correctamente.';
+                    $this->status_code = 200;
                 } else {
-                    $this->res['message'] = 'Hay un catalogo utilizando esta Empresa.';
+                    $this->res['message'] = 'Existe un Trabajador utilizando este Tipo de Contrato.';
                     $this->status_code = 422;
                 }
             } else {

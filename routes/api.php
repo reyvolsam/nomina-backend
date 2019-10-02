@@ -19,6 +19,8 @@ Route::group(['prefix' => 'auth'], function () {
 Route::group(['middleware' => ['cors', 'auth:api']], function (){
     Route::resource('user', 'UserController');
     Route::resource('company', 'Catalogs\CompanyController');
+    Route::resource('contractTypes', 'Catalogs\ContractTypesController');
+    Route::resource('contributionBases', 'Catalogs\ContributionBasesController');
 });
 
 
