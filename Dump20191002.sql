@@ -33,7 +33,7 @@ CREATE TABLE `companies` (
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,39 +42,41 @@ CREATE TABLE `companies` (
 
 LOCK TABLES `companies` WRITE;
 /*!40000 ALTER TABLE `companies` DISABLE KEYS */;
-INSERT INTO `companies` VALUES (1,'Dysco','Esau Perez Munive','REPS890903975','9213043670','2019-09-26 12:00:00',NULL,NULL);
+INSERT INTO `companies` VALUES (1,'Badak_2','Nacho Badak_','REPS890903975','921 304 36 70','2019-09-26 12:00:00','2019-10-01 22:55:43',NULL),(2,'Badak','Nacho Badak','REPS890903975','921 304 36 70','2019-10-01 22:51:59','2019-10-01 22:51:59',NULL);
 /*!40000 ALTER TABLE `companies` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `company_user`
+-- Table structure for table `company_users`
 --
 
-DROP TABLE IF EXISTS `company_user`;
+DROP TABLE IF EXISTS `company_users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `company_user` (
+CREATE TABLE `company_users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(10) unsigned NOT NULL,
+  `user_id` bigint(20) unsigned NOT NULL,
   `company_id` int(10) unsigned NOT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `company_user_user_id_fk_idx` (`user_id`),
   KEY `company_user_company_id_idx` (`company_id`),
   CONSTRAINT `company_user_company_id` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`),
-  CONSTRAINT `company_user_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`group_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+  CONSTRAINT `company_user_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `company_user`
+-- Dumping data for table `company_users`
 --
 
-LOCK TABLES `company_user` WRITE;
-/*!40000 ALTER TABLE `company_user` DISABLE KEYS */;
-/*!40000 ALTER TABLE `company_user` ENABLE KEYS */;
+LOCK TABLES `company_users` WRITE;
+/*!40000 ALTER TABLE `company_users` DISABLE KEYS */;
+INSERT INTO `company_users` VALUES (2,4,2,'2019-10-01 23:34:42','2019-10-01 23:56:52',NULL);
+/*!40000 ALTER TABLE `company_users` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -148,7 +150,9 @@ CREATE TABLE `departments` (
   `updated_at` datetime DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `departments_company_id_fk_idx` (`company_id`),
+  CONSTRAINT `departments_company_id_fk` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -636,7 +640,7 @@ CREATE TABLE `users` (
   KEY `uers_company_id_fk_idx` (`default_company_id`),
   CONSTRAINT `uers_company_id_fk` FOREIGN KEY (`default_company_id`) REFERENCES `companies` (`id`),
   CONSTRAINT `users_group_id_fk` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -645,7 +649,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Samuel Regino Placido','samuel.regino@next-io.com',NULL,'$2y$10$lhfiQ4PxkL50BCPU4eYSS.JjkDom9MyeDDJcx1OtkZwnZFPzuc5aO',NULL,4,'avatar.png',NULL,1,'2019-10-01 03:22:22','2019-10-01 03:22:22',NULL);
+INSERT INTO `users` VALUES (1,'Samuel Regino Placido','samuel.regino@next-io.com',NULL,'$2y$10$lhfiQ4PxkL50BCPU4eYSS.JjkDom9MyeDDJcx1OtkZwnZFPzuc5aO',NULL,4,'avatar.png',NULL,1,'2019-10-01 03:22:22','2019-10-01 03:22:22',NULL),(4,'Esau Munive','esau.munive@next-io.com',NULL,'$2y$10$utodZo6VSY3VPpGyCQ7tcOIworcs/IHm9vPeWMOmORPNygciUnMX.',NULL,2,'avatar.png',NULL,1,'2019-10-02 04:34:42','2019-10-02 04:56:52',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -830,4 +834,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-01  0:12:32
+-- Dump completed on 2019-10-02  0:08:12

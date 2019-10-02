@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Validator;
-
+use App\CompanyUser;
 use App\User;
 
 class UserController extends Controller
@@ -81,6 +81,7 @@ class UserController extends Controller
             $data['name']           = $this->request->input('name');
             $data['email']          = $this->request->input('email');
             $data['group_id']       = $this->request->input('group_id');
+            $data['company_id']     = $this->request->input('company_id');
             $data['active']         = $this->request->input('active');
 
             if(!$validator->fails()) {
@@ -102,6 +103,24 @@ class UserController extends Controller
                         $user->active           = $data['active'];
                         $user->save();
 
+                        $CompanyUser_exist = CompanyUser::withTrashed()
+                                                    ->where('company_id', '=', $data['company_id'])
+                                                    ->where('user_id', '=', $user->id)
+                                                    ->get();
+
+                        if($data['group_id'] != 1 || $data['group_id'] != 4){
+                            if(count($CompanyUser_exist) > 0){
+                                CompanyUser::withTrashed()
+                                        ->where('user_id', '=', $user->id)
+                                        ->where('company_id', '=', $data['company_id'])
+                                        ->restore();
+                            } else {
+                                $CompanyUser = new CompanyUser();
+                                $CompanyUser->user_id = $user->id;
+                                $CompanyUser->company_id = $data['company_id'];
+                                $CompanyUser->save();
+                            }
+                        }
                         $this->res['message'] = 'Usuario restaurado correctamente.';
                         $this->status_code = 201;
                     } else {
@@ -113,6 +132,13 @@ class UserController extends Controller
                         $user->group_id         = $data['group_id'];
                         $user->active           = $data['active'];
                         $user->save();
+
+                        if($data['group_id'] != 1 || $data['group_id'] != 4){
+                            $CompanyUser = new CompanyUser();
+                            $CompanyUser->user_id = $user->id;
+                            $CompanyUser->company_id = $data['company_id'];
+                            $CompanyUser->save();
+                        }
 
                         $this->res['message'] = 'Usuario creado correctamente.';
                         $this->status_code = 201;
@@ -225,6 +251,8 @@ class UserController extends Controller
             if(is_numeric($id)){
                 $user = User::find($id);
                 if($user){
+                    $company_user = CompanyUser::where('user_id', $id)->first();
+                    $company_user->delete();
                     $user->delete();
                     $this->res['message'] = 'Usuario eliminado correctamente.';
                     $this->status_code = 201;

@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Catalogs;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
-
+use App\Department;
 use App\Company;
+use App\JobCompany;
+use App\CompanyUser;
+use Validator;
 
 class CompanyController extends Controller
 {
@@ -81,7 +84,7 @@ class CompanyController extends Controller
                     $company_trash = Company::withTrashed()->where('name', $name)->count();
 
                     if($company_trash == 0){
-                        $company = new Grade;
+                        $company = new Company;
                         $company->create($this->request->all());
 
                         $this->res['message'] = 'Empresa creada correctamente.';
@@ -188,20 +191,26 @@ class CompanyController extends Controller
     {
         try{
             if(is_numeric($id)){
-                $exist_school_group = SchoolGroup::where('grade_id', $id)->count();
-                if($exist_school_group == 0){
-                    $grade = Grade::find($id);
-                    if($grade){
-                        $grade->delete();
-                        $this->res['message'] = 'Grado eliminado correctamente.';
+
+                $exist_company_department = Department::where('company_id', $id)->count();
+
+                $exist_company_user = CompanyUser::where('company_id', $id)->count();
+
+                $exist_company_job = JobCompany::where('company_id', $id)->count();
+
+                if($exist_company_department == 0 && $exist_company_user == 0 && $exist_company_job == 0){
+                    $company = Company::find($id);
+
+                    if($company){
+                        $company->delete();
+                        $this->res['message'] = 'Empresa eliminada correctamente.';
                         $this->status_code = 200;
                     } else {
-                        $this->res['message'] = 'El grado no existe.';
+                        $this->res['message'] = 'La Empresa no existe.';
                         $this->status_code = 422;
                     }
                 } else {
-                    $this->res['message'] = 'Hay un grupo usando este grado.';
-                    $this->status_code = 422;
+                    $this->res['message'] = 'Hay un catalogo utilizando esta Empresa.';
                 }
             } else {
                 $this->res['message'] = 'ID incorrecto.';
