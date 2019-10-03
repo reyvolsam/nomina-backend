@@ -21,6 +21,7 @@ Route::group(['middleware' => ['cors', 'auth:api']], function (){
     Route::resource('company', 'Catalogs\CompanyController');
     Route::resource('contractTypes', 'Catalogs\ContractTypesController');
     Route::resource('contributionBases', 'Catalogs\ContributionBasesController');
+    Route::resource('employeeTypes', 'Catalogs\EmployeeTypesController');
 });
 
 
