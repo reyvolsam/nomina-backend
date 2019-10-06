@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Catalogs;
 
-use App\ContributionBases;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\PeriodTypes;
 use App\Worker;
 use Validator;
 
-class ContributionBasesController extends Controller
+class PeriodTypesController extends Controller
 {
     private $res = [];
     private $request;
@@ -29,17 +29,17 @@ class ContributionBasesController extends Controller
      */
     public function index()
     {
-        try {
-            $contribution_bases_list = [];
-            $contribution_bases_list = ContributionBases::all();
+        try{
+            $period_types_list = [];
+            $period_types_list = PeriodTypes::all();
 
-            if(count($contribution_bases_list) > 0){
-                foreach ($contribution_bases_list as $kc => $vc) $vc->loader = false;
-                $this->res['message'] = 'Bases de Cotización obtenida correctamente.';
-                $this->res['data'] = $contribution_bases_list;
+            if(count($period_types_list) > 0){
+                foreach ($period_types_list as $kc => $vc) $vc->loader = false;
+                $this->res['message'] = 'Lista de Tipos de Periodo obtenida correctamente.';
+                $this->res['data'] = $period_types_list;
                 $this->status_code = 200;
             } else {
-                $this->res['message'] = 'No hay Bases de Cotización registradas hasta el momento.';
+                $this->res['message'] = 'No hay Tipos de Periodo registrados hasta el momento.';
                 $this->status_code = 201;
             }
         } catch(\Exception $e){
@@ -75,28 +75,28 @@ class ContributionBasesController extends Controller
             if(!$validator->fails()) {
                 $name = $this->request->input('name');
 
-                $contribution_bases_repeated = ContributionBases::where('name', $name)->count();
-                if($contribution_bases_repeated == 0){
-                    $contribution_bases_trash = ContributionBases::withTrashed()->where('name', $name)->count();
+                $period_types_repeated = PeriodTypes::where('name', $name)->count();
+                if($period_types_repeated == 0){
+                    $period_types_trash = PeriodTypes::withTrashed()->where('name', $name)->count();
 
-                    if($contribution_bases_trash == 0){
-                        $contribution_bases = new ContributionBases;
-                        $contribution_bases->create($this->request->all());
+                    if($period_types_trash == 0){
+                        $period_types = new PeriodTypes;
+                        $period_types->create($this->request->all());
 
-                        $this->res['message'] = 'Base de Cotización creada correctamente.';
+                        $this->res['message'] = 'Tipo de Periodo creado correctamente.';
                         $this->status_code = 200;
                     } else {
-                        ContributionBases::withTrashed()->where('name', $name)->restore();
+                        PeriodTypes::withTrashed()->where('name', $name)->restore();
 
-                        $contribution_bases = ContributionBases::where('name', $name)->first();
+                        $period_types = PeriodTypes::where('name', $name)->first();
 
-                        $contribution_bases->updateOrCreate(['id' => $contribution_bases->id], $this->request->all());
+                        $period_types->updateOrCreate(['id' => $period_types->id], $this->request->all());
 
-                        $this->res['message'] = 'Base de Cotización restaurada correctamente.';
+                        $this->res['message'] = 'Tipo de Periodo restaurado correctamente.';
                         $this->status_code = 422;
                     }
                 } else {
-                    $this->res['message'] = 'La Base de Cotización ya existe.';
+                    $this->res['message'] = 'El Tipo de Periodo ya existe.';
                     $this->status_code = 423;
                 }
             } else {
@@ -149,18 +149,17 @@ class ContributionBasesController extends Controller
                 ]);
 
                 if(!$validator->fails()) {
-                    $contribution_bases_exist = ContributionBases::find($id);
-                    if($contribution_bases_exist){
-                        ContributionBases::updateOrCreate(['id' => $id], $this->request->all());
-                        $this->res['message'] = 'Base de Cotización actualizada correctamente.';
+                    $period_type_exist = PeriodTypes::find($id);
+                    if($period_type_exist){
+                        PeriodTypes::updateOrCreate(['id' => $id], $this->request->all());
+                        $this->res['message'] = 'Tipo de Periodo actualizado correctamente.';
                         $this->status_code = 200;
                     } else {
-                        $this->res['message'] = 'La Base de Cotización no existe.';
+                        $this->res['message'] = 'El Tipo de Periodo no existe.';
                         $this->status_code = 422;
                     }
                 } else {
                     $this->res['message'] = 'Por favor llene todos los campos requeridos o revise la longitud de los campos.';
-                    $this->res["data"] = $this->request->all();
                     $this->status_code = 422;
                 }
             } else {
@@ -185,15 +184,15 @@ class ContributionBasesController extends Controller
     {
         try{
             if(is_numeric($id)){
-                $exist_worker = Worker::where('contribution_bases_id', $id)->count();
+                $exist_worker = Worker::where('period_type_id', $id)->count();
 
                 if($exist_worker == 0){
-                    $contribution_bases = ContributionBases::find($id);
-                    $contribution_bases->delete();
-                    $this->res['message'] = 'Base de Cotización eliminado correctamente.';
+                    $period_types = PeriodTypes::find($id);
+                    $period_types->delete();
+                    $this->res['message'] = 'Tipo de Periodo eliminado correctamente.';
                     $this->status_code = 200;
                 } else {
-                    $this->res['message'] = 'Existe un Trabajador utilizando esta Base de Cotización.';
+                    $this->res['message'] = 'Existe un Trabajador utilizando este Tipo de Periodo.';
                     $this->status_code = 422;
                 }
             } else {

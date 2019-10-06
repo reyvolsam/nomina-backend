@@ -182,6 +182,29 @@ class EmployeeTypesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try{
+            if(is_numeric($id)){
+                $exist_worker = Worker::where('employee_type_id', $id)->count();
+
+                if($exist_worker == 0){
+                    $employee_types = EmployeeTypes::find($id);
+                    $employee_types->delete();
+                    $this->res['message'] = 'Tipo de Empleo eliminado correctamente.';
+                    $this->status_code = 200;
+                } else {
+                    $this->res['message'] = 'Existe un Trabajador utilizando este Tipo de Empleo.';
+                    $this->status_code = 422;
+                }
+            } else {
+                $this->res['message'] = 'ID incorrecto.';
+                $this->status_code = 422;
+            }
+        } catch(\Exception $e) {
+            $this->res['message'] = 'Error en el sistema.'.$e;
+            $this->status_code = 422;
+        }
+
+        return response()->json($this->res, $this->status_code);
+    }
     }
 }

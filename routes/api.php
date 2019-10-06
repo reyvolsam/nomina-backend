@@ -22,6 +22,11 @@ Route::group(['middleware' => ['cors', 'auth:api']], function (){
     Route::resource('contractTypes', 'Catalogs\ContractTypesController');
     Route::resource('contributionBases', 'Catalogs\ContributionBasesController');
     Route::resource('employeeTypes', 'Catalogs\EmployeeTypesController');
+    Route::resource('workShifts', 'Catalogs\WorkShiftsController');
+    Route::resource('paymentMethods', 'Catalogs\PaymentMethodsController');
+    Route::resource('sexs', 'Catalogs\SexsController');
+    Route::resource('discountTypes', 'Catalogs\DiscountTypesController');
+    Route::resource('periodTypes', 'Catalogs\PeriodTypesController');
 });
 
 

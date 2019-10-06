@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Catalogs;
 
-use App\ContributionBases;
+use App\DiscountTypes;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Worker;
 use Validator;
 
-class ContributionBasesController extends Controller
+class DiscountTypesController extends Controller
 {
     private $res = [];
     private $request;
@@ -29,17 +29,17 @@ class ContributionBasesController extends Controller
      */
     public function index()
     {
-        try {
-            $contribution_bases_list = [];
-            $contribution_bases_list = ContributionBases::all();
+        try{
+            $discount_types_list = [];
+            $discount_types_list = DiscountTypes::all();
 
-            if(count($contribution_bases_list) > 0){
-                foreach ($contribution_bases_list as $kc => $vc) $vc->loader = false;
-                $this->res['message'] = 'Bases de Cotización obtenida correctamente.';
-                $this->res['data'] = $contribution_bases_list;
+            if(count($discount_types_list) > 0){
+                foreach ($discount_types_list as $kc => $vc) $vc->loader = false;
+                $this->res['message'] = 'Lista de Tipos de Descuento obtenida correctamente.';
+                $this->res['data'] = $discount_types_list;
                 $this->status_code = 200;
             } else {
-                $this->res['message'] = 'No hay Bases de Cotización registradas hasta el momento.';
+                $this->res['message'] = 'No hay Tipos de Descuento registrados hasta el momento.';
                 $this->status_code = 201;
             }
         } catch(\Exception $e){
@@ -75,28 +75,28 @@ class ContributionBasesController extends Controller
             if(!$validator->fails()) {
                 $name = $this->request->input('name');
 
-                $contribution_bases_repeated = ContributionBases::where('name', $name)->count();
-                if($contribution_bases_repeated == 0){
-                    $contribution_bases_trash = ContributionBases::withTrashed()->where('name', $name)->count();
+                $discount_types_repeated = DiscountTypes::where('name', $name)->count();
+                if($discount_types_repeated == 0){
+                    $discount_types_trash = DiscountTypes::withTrashed()->where('name', $name)->count();
 
-                    if($contribution_bases_trash == 0){
-                        $contribution_bases = new ContributionBases;
-                        $contribution_bases->create($this->request->all());
+                    if($discount_types_trash == 0){
+                        $discount_types = new DiscountTypes;
+                        $discount_types->create($this->request->all());
 
-                        $this->res['message'] = 'Base de Cotización creada correctamente.';
+                        $this->res['message'] = 'Tipo de Descuento creado correctamente.';
                         $this->status_code = 200;
                     } else {
-                        ContributionBases::withTrashed()->where('name', $name)->restore();
+                        DiscountTypes::withTrashed()->where('name', $name)->restore();
 
-                        $contribution_bases = ContributionBases::where('name', $name)->first();
+                        $discount_types = DiscountTypes::where('name', $name)->first();
 
-                        $contribution_bases->updateOrCreate(['id' => $contribution_bases->id], $this->request->all());
+                        $discount_types->updateOrCreate(['id' => $discount_types->id], $this->request->all());
 
-                        $this->res['message'] = 'Base de Cotización restaurada correctamente.';
+                        $this->res['message'] = 'Tipo de Descuento restaurado correctamente.';
                         $this->status_code = 422;
                     }
                 } else {
-                    $this->res['message'] = 'La Base de Cotización ya existe.';
+                    $this->res['message'] = 'El Tipo de Descuento ya existe.';
                     $this->status_code = 423;
                 }
             } else {
@@ -149,18 +149,17 @@ class ContributionBasesController extends Controller
                 ]);
 
                 if(!$validator->fails()) {
-                    $contribution_bases_exist = ContributionBases::find($id);
-                    if($contribution_bases_exist){
-                        ContributionBases::updateOrCreate(['id' => $id], $this->request->all());
-                        $this->res['message'] = 'Base de Cotización actualizada correctamente.';
+                    $discount_type_exist = DiscountTypes::find($id);
+                    if($discount_type_exist){
+                        DiscountTypes::updateOrCreate(['id' => $id], $this->request->all());
+                        $this->res['message'] = 'Tipo de Descuento actualizado correctamente.';
                         $this->status_code = 200;
                     } else {
-                        $this->res['message'] = 'La Base de Cotización no existe.';
+                        $this->res['message'] = 'El Tipo de Descuento no existe.';
                         $this->status_code = 422;
                     }
                 } else {
                     $this->res['message'] = 'Por favor llene todos los campos requeridos o revise la longitud de los campos.';
-                    $this->res["data"] = $this->request->all();
                     $this->status_code = 422;
                 }
             } else {
@@ -185,15 +184,15 @@ class ContributionBasesController extends Controller
     {
         try{
             if(is_numeric($id)){
-                $exist_worker = Worker::where('contribution_bases_id', $id)->count();
+                $exist_worker = Worker::where('discount_type_id', $id)->count();
 
                 if($exist_worker == 0){
-                    $contribution_bases = ContributionBases::find($id);
-                    $contribution_bases->delete();
-                    $this->res['message'] = 'Base de Cotización eliminado correctamente.';
+                    $discount_types = DiscountTypes::find($id);
+                    $discount_types->delete();
+                    $this->res['message'] = 'Tipo de Descuento eliminado correctamente.';
                     $this->status_code = 200;
                 } else {
-                    $this->res['message'] = 'Existe un Trabajador utilizando esta Base de Cotización.';
+                    $this->res['message'] = 'Existe un Trabajador utilizando este Tipo de Descuento.';
                     $this->status_code = 422;
                 }
             } else {
