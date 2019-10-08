@@ -122,7 +122,7 @@ CREATE TABLE `contribution_bases` (
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -131,7 +131,7 @@ CREATE TABLE `contribution_bases` (
 
 LOCK TABLES `contribution_bases` WRITE;
 /*!40000 ALTER TABLE `contribution_bases` DISABLE KEYS */;
-INSERT INTO `contribution_bases` VALUES (1,'Variable','2019-09-27 12:00:00',NULL,NULL),(2,'Fijo','2019-09-27 12:00:00',NULL,NULL),(3,'Mixto','2019-09-27 12:00:00',NULL,NULL);
+INSERT INTO `contribution_bases` VALUES (1,'Variable','2019-09-27 12:00:00',NULL,NULL),(2,'Fijo','2019-09-27 12:00:00',NULL,NULL),(3,'Mixto','2019-09-27 12:00:00',NULL,NULL),(4,'bas de cotiezaion editada','2019-10-05 19:29:07','2019-10-05 19:35:23',NULL);
 /*!40000 ALTER TABLE `contribution_bases` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -153,7 +153,7 @@ CREATE TABLE `departments` (
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `departments_company_id_fk_idx` (`company_id`),
   CONSTRAINT `departments_company_id_fk` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -162,6 +162,7 @@ CREATE TABLE `departments` (
 
 LOCK TABLES `departments` WRITE;
 /*!40000 ALTER TABLE `departments` DISABLE KEYS */;
+INSERT INTO `departments` VALUES (1,'Departamento 1 old',1,'2019-10-07 23:11:43','2019-10-07 23:14:39',NULL),(2,'Departamento 2',1,'2019-10-07 23:12:04','2019-10-07 23:12:04',NULL);
 /*!40000 ALTER TABLE `departments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -180,7 +181,7 @@ CREATE TABLE `discount_types` (
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -189,7 +190,7 @@ CREATE TABLE `discount_types` (
 
 LOCK TABLES `discount_types` WRITE;
 /*!40000 ALTER TABLE `discount_types` DISABLE KEYS */;
-INSERT INTO `discount_types` VALUES (1,'Porcentaje','2019-09-27 12:00:00',NULL,NULL),(2,'Factor de descuento\n','2019-09-27 12:00:00',NULL,NULL),(3,'Cuota fija\n','2019-09-27 12:00:00',NULL,NULL);
+INSERT INTO `discount_types` VALUES (1,'Porcentaje','2019-09-27 12:00:00',NULL,NULL),(2,'Factor de descuento','2019-09-27 12:00:00',NULL,NULL),(3,'Cuota fija','2019-09-27 12:00:00',NULL,NULL),(4,'Tipo de descuento_old','2019-10-05 21:44:23','2019-10-05 21:46:09',NULL),(5,'Tipo de descuento','2019-10-05 21:46:15','2019-10-05 21:46:15',NULL);
 /*!40000 ALTER TABLE `discount_types` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -236,7 +237,7 @@ CREATE TABLE `employee_types` (
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -245,7 +246,7 @@ CREATE TABLE `employee_types` (
 
 LOCK TABLES `employee_types` WRITE;
 /*!40000 ALTER TABLE `employee_types` DISABLE KEYS */;
-INSERT INTO `employee_types` VALUES (1,'Confianza','2019-09-27 12:00:00',NULL,NULL),(2,'Sindicalizado','2019-09-27 12:00:00',NULL,NULL);
+INSERT INTO `employee_types` VALUES (1,'Confianza','2019-09-27 12:00:00',NULL,NULL),(2,'Sindicalizado','2019-09-27 12:00:00',NULL,NULL),(3,'Tipo de empleado','2019-10-02 21:29:57','2019-10-02 21:29:57',NULL);
 /*!40000 ALTER TABLE `employee_types` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -279,37 +280,6 @@ INSERT INTO `groups` VALUES (1,'Administrador','administration','2019-09-26 12:0
 UNLOCK TABLES;
 
 --
--- Table structure for table `job_company`
---
-
-DROP TABLE IF EXISTS `job_company`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `job_company` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `job_id` int(10) unsigned NOT NULL,
-  `company_id` int(10) unsigned NOT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `job_company_job_id_fk_idx` (`job_id`),
-  KEY `job_company_company_id_fk_idx` (`company_id`),
-  CONSTRAINT `job_company_company_id_fk` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`),
-  CONSTRAINT `job_company_job_id_fk` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `job_company`
---
-
-LOCK TABLES `job_company` WRITE;
-/*!40000 ALTER TABLE `job_company` DISABLE KEYS */;
-/*!40000 ALTER TABLE `job_company` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `jobs`
 --
 
@@ -319,12 +289,15 @@ DROP TABLE IF EXISTS `jobs`;
 CREATE TABLE `jobs` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8_spanish2_ci NOT NULL,
+  `department_id` int(10) unsigned NOT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `jobs_department_id_fk_idx` (`department_id`),
+  CONSTRAINT `jobs_department_id_fk` FOREIGN KEY (`department_id`) REFERENCES `departments` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -333,6 +306,7 @@ CREATE TABLE `jobs` (
 
 LOCK TABLES `jobs` WRITE;
 /*!40000 ALTER TABLE `jobs` DISABLE KEYS */;
+INSERT INTO `jobs` VALUES (4,'Puesto 1',1,'2019-10-07 23:49:10','2019-10-07 23:49:10',NULL);
 /*!40000 ALTER TABLE `jobs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -389,7 +363,7 @@ CREATE TABLE `oauth_access_tokens` (
 
 LOCK TABLES `oauth_access_tokens` WRITE;
 /*!40000 ALTER TABLE `oauth_access_tokens` DISABLE KEYS */;
-INSERT INTO `oauth_access_tokens` VALUES ('084bf432c0c4c7562ecb006e44a316d0f47de10f007c192f9c449277a2fac63c075e1ebcd5ba678f',1,1,'Personal Access Token','[]',0,'2019-10-01 04:15:33','2019-10-01 04:15:33','2020-09-30 23:15:33');
+INSERT INTO `oauth_access_tokens` VALUES ('084bf432c0c4c7562ecb006e44a316d0f47de10f007c192f9c449277a2fac63c075e1ebcd5ba678f',1,1,'Personal Access Token','[]',0,'2019-10-01 04:15:33','2019-10-01 04:15:33','2020-09-30 23:15:33'),('990b1e901660e77d972a1c00b05bb7fd4ace86cc0e76ffa68e2d1cc0a913b28de14a06bcab2f5911',1,1,'Personal Access Token','[]',0,'2019-10-03 02:24:03','2019-10-03 02:24:03','2020-10-02 21:24:03');
 /*!40000 ALTER TABLE `oauth_access_tokens` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -545,7 +519,7 @@ CREATE TABLE `payment_methods` (
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -554,7 +528,7 @@ CREATE TABLE `payment_methods` (
 
 LOCK TABLES `payment_methods` WRITE;
 /*!40000 ALTER TABLE `payment_methods` DISABLE KEYS */;
-INSERT INTO `payment_methods` VALUES (1,'01 efectivo\n','2019-09-27 12:00:00',NULL,NULL),(2,'02 Cheque Nominativo\n','2019-09-27 12:00:00',NULL,NULL),(3,'03 Transferencia electrónica\n','2019-09-27 12:00:00',NULL,NULL),(4,'04 Tarjeta de Crédito\n04 Tarjeta de Crédito\n','2019-09-27 12:00:00',NULL,NULL),(5,'05 Monedero Electrónico\n','2019-09-27 12:00:00',NULL,NULL),(6,'06 Dinero Electrónico\n','2019-09-27 12:00:00',NULL,NULL),(7,'08 Vale de Despensa','2019-09-27 12:00:00',NULL,NULL),(8,'12 Dación en Pago\n','2019-09-27 12:00:00',NULL,NULL),(9,'13 Pago por Subrogación\n','2019-09-27 12:00:00',NULL,NULL),(10,'14 Pago por consignación\n','2019-09-27 12:00:00',NULL,NULL),(11,'15 Condonación\n','2019-09-27 12:00:00',NULL,NULL),(12,'17 Compensación\n','2019-09-27 12:00:00',NULL,NULL),(13,'23 Novación\n','2019-09-27 12:00:00',NULL,NULL),(14,'24 Confusión\n','2019-09-27 12:00:00',NULL,NULL),(15,'25 Remisión de deuda\n','2019-09-27 12:00:00',NULL,NULL),(16,'28 Tarjeta de débito\n','2019-09-27 12:00:00',NULL,NULL);
+INSERT INTO `payment_methods` VALUES (1,'01 efectivo\n','2019-09-27 12:00:00',NULL,NULL),(2,'02 Cheque Nominativo\n','2019-09-27 12:00:00',NULL,NULL),(3,'03 Transferencia electrónica\n','2019-09-27 12:00:00',NULL,NULL),(4,'04 Tarjeta de Crédito\n04 Tarjeta de Crédito\n','2019-09-27 12:00:00',NULL,NULL),(5,'05 Monedero Electrónico\n','2019-09-27 12:00:00',NULL,NULL),(6,'06 Dinero Electrónico\n','2019-09-27 12:00:00',NULL,NULL),(7,'08 Vale de Despensa','2019-09-27 12:00:00',NULL,NULL),(8,'12 Dación en Pago\n','2019-09-27 12:00:00',NULL,NULL),(9,'13 Pago por Subrogación\n','2019-09-27 12:00:00',NULL,NULL),(10,'14 Pago por consignación\n','2019-09-27 12:00:00',NULL,NULL),(11,'15 Condonación\n','2019-09-27 12:00:00',NULL,NULL),(12,'17 Compensación\n','2019-09-27 12:00:00',NULL,NULL),(13,'23 Novación\n','2019-09-27 12:00:00',NULL,NULL),(14,'24 Confusión\n','2019-09-27 12:00:00',NULL,NULL),(15,'25 Remisión de deuda\n','2019-09-27 12:00:00',NULL,NULL),(16,'28 Tarjeta de débito\n','2019-09-27 12:00:00',NULL,NULL),(17,'metodo de pago mil','2019-10-05 20:02:33','2019-10-05 20:05:10',NULL);
 /*!40000 ALTER TABLE `payment_methods` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -573,7 +547,7 @@ CREATE TABLE `period_types` (
   `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -582,6 +556,7 @@ CREATE TABLE `period_types` (
 
 LOCK TABLES `period_types` WRITE;
 /*!40000 ALTER TABLE `period_types` DISABLE KEYS */;
+INSERT INTO `period_types` VALUES (1,'Tipo de periodo_old','2019-10-05 21:57:40','2019-10-05 21:58:54',NULL);
 /*!40000 ALTER TABLE `period_types` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -682,6 +657,34 @@ INSERT INTO `work_shifts` VALUES (1,'Matutino','2019-09-27 12:00:00',NULL,NULL),
 UNLOCK TABLES;
 
 --
+-- Table structure for table `work_states`
+--
+
+DROP TABLE IF EXISTS `work_states`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `work_states` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) COLLATE utf8_spanish2_ci NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `work_states`
+--
+
+LOCK TABLES `work_states` WRITE;
+/*!40000 ALTER TABLE `work_states` DISABLE KEYS */;
+INSERT INTO `work_states` VALUES (1,'En proceso de alta','2019-09-27 12:00:00',NULL,NULL),(2,'Proceso de reingreso','2019-09-27 12:00:00',NULL,NULL),(3,'Activo','2019-09-27 12:00:00',NULL,NULL),(4,'Proceso de baja','2019-09-27 12:00:00',NULL,NULL),(5,'Dado de baja','2019-09-27 12:00:00',NULL,NULL);
+/*!40000 ALTER TABLE `work_states` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `worker_documentation`
 --
 
@@ -699,7 +702,7 @@ CREATE TABLE `worker_documentation` (
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `worker_documentarion_worker_id_fk_idx` (`worker_id`),
   KEY `worker_documentation_documentation_id_fk_idx` (`document_id`),
-  CONSTRAINT `worker_documentarion_worker_id_fk` FOREIGN KEY (`worker_id`) REFERENCES `workers` (`id`),
+  CONSTRAINT `worker_documentarion_worker_id_fk` FOREIGN KEY (`worker_id`) REFERENCES `works` (`id`),
   CONSTRAINT `worker_documentation_documentation_id_fk` FOREIGN KEY (`document_id`) REFERENCES `documentations` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -714,41 +717,13 @@ LOCK TABLES `worker_documentation` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `worker_states`
+-- Table structure for table `works`
 --
 
-DROP TABLE IF EXISTS `worker_states`;
+DROP TABLE IF EXISTS `works`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `worker_states` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) COLLATE utf8_spanish2_ci NOT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  `deleted_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `worker_states`
---
-
-LOCK TABLES `worker_states` WRITE;
-/*!40000 ALTER TABLE `worker_states` DISABLE KEYS */;
-INSERT INTO `worker_states` VALUES (1,'En proceso de alta','2019-09-27 12:00:00',NULL,NULL),(2,'Proceso de reingreso','2019-09-27 12:00:00',NULL,NULL),(3,'Activo','2019-09-27 12:00:00',NULL,NULL),(4,'Proceso de baja','2019-09-27 12:00:00',NULL,NULL),(5,'Dado de baja','2019-09-27 12:00:00',NULL,NULL);
-/*!40000 ALTER TABLE `worker_states` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `workers`
---
-
-DROP TABLE IF EXISTS `workers`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `workers` (
+CREATE TABLE `works` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(45) COLLATE utf8_spanish2_ci NOT NULL,
   `discharge_date` datetime NOT NULL,
@@ -791,6 +766,9 @@ CREATE TABLE `workers` (
   `infonavit_credit_number` varchar(100) COLLATE utf8_spanish2_ci DEFAULT NULL,
   `discount_type_id` int(10) unsigned NOT NULL,
   `monthly_factor` varchar(100) COLLATE utf8_spanish2_ci DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `workers_contact_type_id_fk_idx` (`contract_type_id`),
@@ -817,12 +795,12 @@ CREATE TABLE `workers` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `workers`
+-- Dumping data for table `works`
 --
 
-LOCK TABLES `workers` WRITE;
-/*!40000 ALTER TABLE `workers` DISABLE KEYS */;
-/*!40000 ALTER TABLE `workers` ENABLE KEYS */;
+LOCK TABLES `works` WRITE;
+/*!40000 ALTER TABLE `works` DISABLE KEYS */;
+/*!40000 ALTER TABLE `works` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -834,4 +812,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-02  0:08:12
+-- Dump completed on 2019-10-07 23:58:04

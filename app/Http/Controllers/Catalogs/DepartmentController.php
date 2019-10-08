@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Catalogs;
 
+
+use App\Work;
+use App\Department;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Work;
-use App\WorkShifts;
 
-class WorkShiftsController extends Controller
+use Validator;
+
+class DepartmentController extends Controller
 {
     private $res = [];
     private $request;
@@ -29,16 +32,16 @@ class WorkShiftsController extends Controller
     public function index()
     {
         try{
-            $work_shifts_list = [];
-            $work_shifts_list = WorkShifts::all();
+            $departments_list = [];
+            $departments_list = Department::all();
 
-            if(count($work_shifts_list) > 0){
-                foreach ($work_shifts_list as $kc => $vc) $vc->loader = false;
-                $this->res['message'] = 'Lista de Turno de Trabajo obtenida correctamente.';
-                $this->res['data'] = $work_shifts_list;
+            if(count($departments_list) > 0){
+                foreach ($departments_list as $kc => $vc) $vc->loader = false;
+                $this->res['message'] = 'Lista de Departamentos obtenida correctamente.';
+                $this->res['data'] = $departments_list;
                 $this->status_code = 200;
             } else {
-                $this->res['message'] = 'No hay Turno de Trabajo registrados hasta el momento.';
+                $this->res['message'] = 'No hay Departamentos registrados hasta el momento.';
                 $this->status_code = 201;
             }
         } catch(\Exception $e){
@@ -68,34 +71,35 @@ class WorkShiftsController extends Controller
     {
         try{
             $validator = Validator::make($this->request->all(), [
-                'name'          => 'required|max:255'
+                'name'          => 'required|max:255',
+                'company_id'    => 'required'
             ]);
 
             if(!$validator->fails()) {
                 $name = $this->request->input('name');
 
-                $work_shifts_repeated = WorkShifts::where('name', $name)->count();
-                if($work_shifts_repeated == 0){
-                    $work_shifts_trash = WorkShifts::withTrashed()->where('name', $name)->count();
+                $departments_repeated = Department::where('name', $name)->count();
+                if($departments_repeated == 0){
+                    $departments_trash = Department::withTrashed()->where('name', $name)->count();
 
-                    if($work_shifts_trash == 0){
-                        $work_shifts = new WorkShifts;
-                        $work_shifts->create($this->request->all());
+                    if($departments_trash == 0){
+                        $departments = new Department;
+                        $departments->create($this->request->all());
 
-                        $this->res['message'] = 'Tipo de Turno de Trabajo creado correctamente.';
+                        $this->res['message'] = 'Departamento creado correctamente.';
                         $this->status_code = 200;
                     } else {
-                        WorkShifts::withTrashed()->where('name', $name)->restore();
+                        Department::withTrashed()->where('name', $name)->restore();
 
-                        $work_shifts = WorkShifts::where('name', $name)->first();
+                        $departments = Department::where('name', $name)->first();
 
-                        $work_shifts->updateOrCreate(['id' => $work_shifts->id], $this->request->all());
+                        $departments->updateOrCreate(['id' => $departments->id], $this->request->all());
 
-                        $this->res['message'] = 'Tipo de Turno de Trabajo restaurado correctamente.';
+                        $this->res['message'] = 'Departamento restaurado correctamente.';
                         $this->status_code = 422;
                     }
                 } else {
-                    $this->res['message'] = 'El Turno de Trabajo ya existe.';
+                    $this->res['message'] = 'El Departamento ya existe.';
                     $this->status_code = 423;
                 }
             } else {
@@ -144,17 +148,18 @@ class WorkShiftsController extends Controller
         try{
             if(is_numeric($id)){
                 $validator = Validator::make($this->request->all(), [
-                    'name'          => 'required|max:255'
+                    'name'          => 'required|max:255',
+                    'company_id'    => 'required'
                 ]);
 
                 if(!$validator->fails()) {
-                    $work_shifts_exist = WorkShifts::find($id);
-                    if($work_shifts_exist){
-                        WorkShifts::updateOrCreate(['id' => $id], $this->request->all());
-                        $this->res['message'] = 'Turno de Trabajo actualizado correctamente.';
+                    $departments_exist = Department::find($id);
+                    if($departments_exist){
+                        Department::updateOrCreate(['id' => $id], $this->request->all());
+                        $this->res['message'] = 'Departamento actualizado correctamente.';
                         $this->status_code = 200;
                     } else {
-                        $this->res['message'] = 'El Turno de Trabajo no existe.';
+                        $this->res['message'] = 'El Departamento no existe.';
                         $this->status_code = 422;
                     }
                 } else {
@@ -183,15 +188,15 @@ class WorkShiftsController extends Controller
     {
         try{
             if(is_numeric($id)){
-                $exist_worker = Work::where('work_shift_id', $id)->count();
+                $exist_worker = Work::where('department_id', $id)->count();
 
                 if($exist_worker == 0){
-                    $work_shifts = WorkShifts::find($id);
-                    $work_shifts->delete();
-                    $this->res['message'] = 'Turno de Trabajo eliminado correctamente.';
+                    $departments = Department::find($id);
+                    $departments->delete();
+                    $this->res['message'] = 'Departamento eliminado correctamente.';
                     $this->status_code = 200;
                 } else {
-                    $this->res['message'] = 'Existe un Trabajador utilizando este Turno de Trabajo.';
+                    $this->res['message'] = 'Existe un Trabajador utilizando este Departamento.';
                     $this->status_code = 422;
                 }
             } else {

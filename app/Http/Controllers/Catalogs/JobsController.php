@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Catalogs;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Work;
-use App\WorkShifts;
+use App\Job;
 
-class WorkShiftsController extends Controller
+use Validator;
+
+class JobsController extends Controller
 {
     private $res = [];
     private $request;
@@ -29,16 +31,16 @@ class WorkShiftsController extends Controller
     public function index()
     {
         try{
-            $work_shifts_list = [];
-            $work_shifts_list = WorkShifts::all();
+            $job_list = [];
+            $job_list = Job::all();
 
-            if(count($work_shifts_list) > 0){
-                foreach ($work_shifts_list as $kc => $vc) $vc->loader = false;
-                $this->res['message'] = 'Lista de Turno de Trabajo obtenida correctamente.';
-                $this->res['data'] = $work_shifts_list;
+            if(count($job_list) > 0){
+                foreach ($job_list as $kc => $vc) $vc->loader = false;
+                $this->res['message'] = 'Lista de Puestos obtenida correctamente.';
+                $this->res['data'] = $job_list;
                 $this->status_code = 200;
             } else {
-                $this->res['message'] = 'No hay Turno de Trabajo registrados hasta el momento.';
+                $this->res['message'] = 'No hay Puestos registrados hasta el momento.';
                 $this->status_code = 201;
             }
         } catch(\Exception $e){
@@ -68,34 +70,35 @@ class WorkShiftsController extends Controller
     {
         try{
             $validator = Validator::make($this->request->all(), [
-                'name'          => 'required|max:255'
+                'name'          => 'required|max:255',
+                'department_id' => 'required',
             ]);
 
             if(!$validator->fails()) {
                 $name = $this->request->input('name');
 
-                $work_shifts_repeated = WorkShifts::where('name', $name)->count();
-                if($work_shifts_repeated == 0){
-                    $work_shifts_trash = WorkShifts::withTrashed()->where('name', $name)->count();
+                $jobs_repeated = Job::where('name', $name)->count();
+                if($jobs_repeated == 0){
+                    $jobs_trash = Job::withTrashed()->where('name', $name)->count();
 
-                    if($work_shifts_trash == 0){
-                        $work_shifts = new WorkShifts;
-                        $work_shifts->create($this->request->all());
+                    if($jobs_trash == 0){
+                        $jobs = new Job;
+                        $jobs->create($this->request->all());
 
-                        $this->res['message'] = 'Tipo de Turno de Trabajo creado correctamente.';
+                        $this->res['message'] = 'Puesto creado correctamente.';
                         $this->status_code = 200;
                     } else {
-                        WorkShifts::withTrashed()->where('name', $name)->restore();
+                        Job::withTrashed()->where('name', $name)->restore();
 
-                        $work_shifts = WorkShifts::where('name', $name)->first();
+                        $jobs = Job::where('name', $name)->first();
 
-                        $work_shifts->updateOrCreate(['id' => $work_shifts->id], $this->request->all());
+                        $jobs->updateOrCreate(['id' => $jobs->id], $this->request->all());
 
-                        $this->res['message'] = 'Tipo de Turno de Trabajo restaurado correctamente.';
+                        $this->res['message'] = 'Puesto restaurado correctamente.';
                         $this->status_code = 422;
                     }
                 } else {
-                    $this->res['message'] = 'El Turno de Trabajo ya existe.';
+                    $this->res['message'] = 'El Puesto ya existe.';
                     $this->status_code = 423;
                 }
             } else {
@@ -144,17 +147,18 @@ class WorkShiftsController extends Controller
         try{
             if(is_numeric($id)){
                 $validator = Validator::make($this->request->all(), [
-                    'name'          => 'required|max:255'
+                    'name'          => 'required|max:255',
+                    'department_id' => 'required'
                 ]);
 
                 if(!$validator->fails()) {
-                    $work_shifts_exist = WorkShifts::find($id);
-                    if($work_shifts_exist){
-                        WorkShifts::updateOrCreate(['id' => $id], $this->request->all());
-                        $this->res['message'] = 'Turno de Trabajo actualizado correctamente.';
+                    $jobs_exist = Job::find($id);
+                    if($jobs_exist){
+                        Job::updateOrCreate(['id' => $id], $this->request->all());
+                        $this->res['message'] = 'Puesto actualizado correctamente.';
                         $this->status_code = 200;
                     } else {
-                        $this->res['message'] = 'El Turno de Trabajo no existe.';
+                        $this->res['message'] = 'El Puesto no existe.';
                         $this->status_code = 422;
                     }
                 } else {
@@ -183,15 +187,15 @@ class WorkShiftsController extends Controller
     {
         try{
             if(is_numeric($id)){
-                $exist_worker = Work::where('work_shift_id', $id)->count();
+                $exist_worker = Work::where('job_id', $id)->count();
 
                 if($exist_worker == 0){
-                    $work_shifts = WorkShifts::find($id);
-                    $work_shifts->delete();
-                    $this->res['message'] = 'Turno de Trabajo eliminado correctamente.';
+                    $job = Job::find($id);
+                    $job->delete();
+                    $this->res['message'] = 'Puesto eliminado correctamente.';
                     $this->status_code = 200;
                 } else {
-                    $this->res['message'] = 'Existe un Trabajador utilizando este Turno de Trabajo.';
+                    $this->res['message'] = 'Existe un Trabajador utilizando este Puesto.';
                     $this->status_code = 422;
                 }
             } else {

@@ -45,6 +45,6 @@ class User extends Authenticatable
     public function Group()
     {
         return $this->belongsTo('App\Group');
-    }//Campus()
+    }//Group()
 
 }

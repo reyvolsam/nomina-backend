@@ -27,6 +27,9 @@ Route::group(['middleware' => ['cors', 'auth:api']], function (){
     Route::resource('sexs', 'Catalogs\SexsController');
     Route::resource('discountTypes', 'Catalogs\DiscountTypesController');
     Route::resource('periodTypes', 'Catalogs\PeriodTypesController');
+    Route::resource('departments', 'Catalogs\DepartmentController');
+    Route::resource('jobs', 'Catalogs\JobsController');
+    Route::resource('work', 'WorkController');
 });
 
 

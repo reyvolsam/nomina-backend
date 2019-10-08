@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Department;
 use App\Company;
-use App\JobCompany;
 use App\CompanyUser;
 use Validator;
 
@@ -198,9 +197,7 @@ class CompanyController extends Controller
 
                 $exist_company_user = CompanyUser::where('company_id', $id)->count();
 
-                $exist_company_job = JobCompany::where('company_id', $id)->count();
-
-                if($exist_company_department == 0 && $exist_company_user == 0 && $exist_company_job == 0){
+                if($exist_company_department == 0 && $exist_company_user == 0){
                     $company = Company::find($id);
 
                     if($company){

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Catalogs;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\PaymentMethods;
-use App\Worker;
+use App\Work;
 use Faker\Provider\de_DE\Payment;
 use Validator;
 
@@ -185,7 +185,7 @@ class PaymentMethodsController extends Controller
     {
         try{
             if(is_numeric($id)){
-                $exist_worker = Worker::where('payment_method_id', $id)->count();
+                $exist_worker = Work::where('payment_method_id', $id)->count();
 
                 if($exist_worker == 0){
                     $payment_methods = PaymentMethods::find($id);

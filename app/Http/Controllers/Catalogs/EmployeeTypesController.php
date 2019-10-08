@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Catalogs;
 
+use App\Work;
 use App\EmployeeTypes;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -184,7 +185,7 @@ class EmployeeTypesController extends Controller
     {
         try{
             if(is_numeric($id)){
-                $exist_worker = Worker::where('employee_type_id', $id)->count();
+                $exist_worker = Work::where('employee_type_id', $id)->count();
 
                 if($exist_worker == 0){
                     $employee_types = EmployeeTypes::find($id);
@@ -206,5 +207,5 @@ class EmployeeTypesController extends Controller
 
         return response()->json($this->res, $this->status_code);
     }
-    }
+
 }
