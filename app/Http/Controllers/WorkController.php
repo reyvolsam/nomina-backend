@@ -67,7 +67,54 @@ class WorkController extends Controller
      */
     public function store()
     {
-        //
+        try{
+            $validator = Validator::make($this->request->all(), [
+                'code'                      => 'required|max:45',
+                'discharge_date'            => 'required|max:45',
+                'name'                      => 'required|max:100',
+                'first_name'                => 'required|max:100',
+                'last_name'                 => 'required|max:100',
+                'contract_type_id'          => 'required',
+                'period_type_id'            => 'required',
+                'real_daily_salary'         => 'required',
+                'imss_daily_salary'         => 'required',
+                'contribution_base_salary'  => 'required',
+                'contribution_base_id'      => 'required',
+                'employee_type_id'          => 'required',
+                'payment_method_id'         => 'required',
+                'work_shift_id'             => 'required',
+                'number_afore'              => 'required|max:100',
+                'social_security_number'    => 'required|max:100',
+                'rfc'                       => 'required|max:13',
+                'curp'                      => 'required|max:22',
+                'sex_id'                    => 'required',
+                'birth_city'                => 'required|max:100',
+                'birth_date'                => 'required',
+            ]);
+
+            if(!$validator->fails()) {
+                $name = $this->request->input('name');
+                $first_name = $this->request->input('first_name');
+                $last_name = $this->request->input('last_name');
+
+                $last_repeated = Company::where('name', $name)
+                                        ->where('first_name', $first_name)
+                                        ->where('last_name', $last_name)
+                                        ->count();
+                if($last_repeated == 0){
+                } else {
+                    $this->res['message'] = 'El trabajador ya existe.';
+                    $this->status_code = 423;
+                }
+            } else {
+                $this->res['message'] = 'Por favor llene todos los campos requeridos o revise la longitud de los campos.';
+                $this->status_code = 422;
+            }
+        } catch(\Exception $e) {
+            $this->res['message'] = 'Error en el sistema.'.$e;
+            $this->status_code = 422;
+        }
+        return response()->json($this->res, $this->status_code);
     }
 
     /**
