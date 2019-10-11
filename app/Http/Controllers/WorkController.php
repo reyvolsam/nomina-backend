@@ -97,11 +97,33 @@ class WorkController extends Controller
                 $first_name = $this->request->input('first_name');
                 $last_name = $this->request->input('last_name');
 
-                $last_repeated = Company::where('name', $name)
+                $last_repeated = Work::where('name', $name)
                                         ->where('first_name', $first_name)
                                         ->where('last_name', $last_name)
                                         ->count();
                 if($last_repeated == 0){
+                    if($last_repeated == 0){
+                        $work = new Work;
+                        $work->create($this->request->all());
+
+                        $this->res['message'] = 'Trabajador creado correctamente.';
+                        $this->status_code = 200;
+                    } else {
+                        Work::withTrashed()->where('name', $name)
+                                        ->where('first_name', $first_name)
+                                        ->where('last_name', $last_name)
+                                        ->restore();
+
+                        $work = Company::where('name', $name)
+                                            ->where('first_name', $first_name)
+                                            ->where('last_name', $last_name)
+                                            ->first();
+
+                        $work->updateOrCreate(['id' => $work->id], $this->request->all());
+
+                        $this->res['message'] = 'Trabajador restaurado correctamente.';
+                        $this->status_code = 422;
+                    }
                 } else {
                     $this->res['message'] = 'El trabajador ya existe.';
                     $this->status_code = 423;
