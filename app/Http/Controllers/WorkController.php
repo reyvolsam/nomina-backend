@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Work;
 use Illuminate\Http\Request;
+
+use App\WorkDocumentations;
+use App\Work;
 use Validator;
 
 class WorkController extends Controller
@@ -168,9 +170,59 @@ class WorkController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($id)
     {
-        //
+        try{
+            if(is_numeric($id)){
+                $validator = Validator::make($this->request->all(), [
+                    'code'                      => 'required|max:45',
+                    'discharge_date'            => 'required|max:45',
+                    'name'                      => 'required|max:100',
+                    'first_name'                => 'required|max:100',
+                    'last_name'                 => 'required|max:100',
+                    'contract_type_id'          => 'required',
+                    'period_type_id'            => 'required',
+                    'real_daily_salary'         => 'required',
+                    'imss_daily_salary'         => 'required',
+                    'contribution_base_salary'  => 'required',
+                    'contribution_base_id'      => 'required',
+                    'employee_type_id'          => 'required',
+                    'payment_method_id'         => 'required',
+                    'work_shift_id'             => 'required',
+                    'number_afore'              => 'required|max:100',
+                    'social_security_number'    => 'required|max:100',
+                    'rfc'                       => 'required|max:13',
+                    'curp'                      => 'required|max:22',
+                    'sex_id'                    => 'required',
+                    'birth_city'                => 'required|max:100',
+                    'birth_date'                => 'required',
+                ]);
+
+                if(!$validator->fails()) {
+                    $work_exist = Work::find($id);
+                    if($work_exist){
+                        Work::updateOrCreate(['id' => $id], $this->request->all());
+                        $this->res['message'] = 'Trabajadpor actualizado correctamente.';
+                        $this->status_code = 200;
+                    } else {
+                        $this->res['message'] = 'El Trabajador no existe.';
+                        $this->status_code = 422;
+                    }
+                } else {
+                    $this->res['message'] = 'Por favor llene todos los campos requeridos o revise la longitud de los campos.';
+                    $this->status_code = 422;
+                }
+            } else {
+
+                $this->res['message'] = 'ID incorrecto.';
+                $this->status_code = 422;
+            }
+        } catch(\Exception $e) {
+            $this->res['message'] = 'Error en el sistema.'.$e;
+            $this->status_code = 422;
+        }
+
+        return response()->json($this->res, $this->status_code);
     }
 
     /**
@@ -181,6 +233,30 @@ class WorkController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try{
+            if(is_numeric($id)){
+                $work = Work::find($id);
+                if($work){
+                    $work->delete();
+                    $work_doc = WorkDocumentations::where('work_id',$id)->first();
+                    if($work_doc){
+                        $work_doc->delete();
+                    }
+                    $this->res['message'] = 'Trabajador eliminado correctamente.';
+                    $this->status_code = 200;
+                } else {
+                    $this->res['message'] = 'El Trabajador no existe.';
+                    $this->status_code = 422;
+                }
+            } else {
+                $this->res['message'] = 'ID incorrecto.';
+                $this->status_code = 422;
+            }
+        } catch(\Exception $e) {
+            $this->res['message'] = 'Error en el sistema.'.$e;
+            $this->status_code = 422;
+        }
+
+        return response()->json($this->res, $this->status_code);
     }
 }
