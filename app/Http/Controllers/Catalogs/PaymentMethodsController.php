@@ -18,6 +18,7 @@ class PaymentMethodsController extends Controller
     {
         $this->request = $request;
         $this->res['message'] = '';
+        $this->res['data'] = [];
         $this->status_code = 204;
 
         date_default_timezone_set('America/Mexico_City');
@@ -32,7 +33,7 @@ class PaymentMethodsController extends Controller
     {
         try{
             $payment_methods_list = [];
-            $payment_methods_list = PaymentMethods::all();
+            $payment_methods_list = PaymentMethods::with('Company')->get();
 
             if(count($payment_methods_list) > 0){
                 foreach ($payment_methods_list as $kc => $vc) $vc->loader = false;
@@ -71,6 +72,7 @@ class PaymentMethodsController extends Controller
         try{
             $validator = Validator::make($this->request->all(), [
                 'name'          => 'required|max:255',
+                'company_id'    => 'required',
             ]);
 
             if(!$validator->fails()) {
@@ -146,7 +148,8 @@ class PaymentMethodsController extends Controller
         try{
             if(is_numeric($id)){
                 $validator = Validator::make($this->request->all(), [
-                    'name'          => 'required|max:255'
+                    'name'          => 'required|max:255',
+                    'company_id'    => 'required',
                 ]);
 
                 if(!$validator->fails()) {

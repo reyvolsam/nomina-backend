@@ -16,6 +16,7 @@ class WorkShiftsController extends Controller
     {
         $this->request = $request;
         $this->res['message'] = '';
+        $this->res['data'] = [];
         $this->status_code = 204;
 
         date_default_timezone_set('America/Mexico_City');
@@ -30,7 +31,7 @@ class WorkShiftsController extends Controller
     {
         try{
             $work_shifts_list = [];
-            $work_shifts_list = WorkShifts::all();
+            $work_shifts_list = WorkShifts::with('Company')->get();
 
             if(count($work_shifts_list) > 0){
                 foreach ($work_shifts_list as $kc => $vc) $vc->loader = false;
@@ -68,7 +69,8 @@ class WorkShiftsController extends Controller
     {
         try{
             $validator = Validator::make($this->request->all(), [
-                'name'          => 'required|max:255'
+                'name'          => 'required|max:255',
+                'company_id'    => 'required'
             ]);
 
             if(!$validator->fails()) {
@@ -144,7 +146,8 @@ class WorkShiftsController extends Controller
         try{
             if(is_numeric($id)){
                 $validator = Validator::make($this->request->all(), [
-                    'name'          => 'required|max:255'
+                    'name'          => 'required|max:255',
+                    'company_id'    => 'required'
                 ]);
 
                 if(!$validator->fails()) {

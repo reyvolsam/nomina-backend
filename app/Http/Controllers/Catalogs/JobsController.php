@@ -17,7 +17,9 @@ class JobsController extends Controller
     function __construct(Request $request)
     {
         $this->request = $request;
+        $this->res['status'] = false;
         $this->res['message'] = '';
+        $this->res['data'] = [];
         $this->status_code = 204;
 
         date_default_timezone_set('America/Mexico_City');
@@ -32,7 +34,7 @@ class JobsController extends Controller
     {
         try{
             $job_list = [];
-            $job_list = Job::all();
+            $job_list = Job::with('Department', 'Company')->get();
 
             if(count($job_list) > 0){
                 foreach ($job_list as $kc => $vc) $vc->loader = false;
@@ -72,6 +74,7 @@ class JobsController extends Controller
             $validator = Validator::make($this->request->all(), [
                 'name'          => 'required|max:255',
                 'department_id' => 'required',
+                'company_id'    => 'required',
             ]);
 
             if(!$validator->fails()) {

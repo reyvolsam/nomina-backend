@@ -18,6 +18,7 @@ class UserController extends Controller
     {
         $this->request = $request;
         $this->res['message'] = '';
+        $this->res['data'] = [];
         $this->status_code = 204;
 
         date_default_timezone_set('America/Mexico_City');
@@ -33,7 +34,7 @@ class UserController extends Controller
         try{
             $user_list = [];
 
-            $user_list = User::with('Group')->select('id', 'name', 'email', 'group_id')->jsonPaginate();
+            $user_list = User::with('Group')->select('id', 'name', 'email', 'group_id', 'default_company_id')->jsonPaginate();
 
             if(count($user_list) > 0){
 
@@ -74,7 +75,8 @@ class UserController extends Controller
             $validator = Validator::make($this->request->all(), [
                 'name'              => 'required|max:255',
                 'email'             => 'required|max:255|email',
-                'group_id'          => 'required'
+                'group_id'          => 'required',
+                'default_company_id' => 'required'
             ]);
 
             $id                     = $this->request->input('id');
@@ -82,6 +84,7 @@ class UserController extends Controller
             $data['email']          = $this->request->input('email');
             $data['group_id']       = $this->request->input('group_id');
             $data['company_id']     = $this->request->input('company_id');
+            $data['default_company_id'] = $this->request->input('default_company_id');
             $data['active']         = $this->request->input('active');
 
             if(!$validator->fails()) {

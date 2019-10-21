@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SharedController;
 use Illuminate\Http\Request;
 
 /*
@@ -14,9 +15,11 @@ use Illuminate\Http\Request;
 */
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login', 'Auth\LoginController@auth');
+    Route::post('logout', 'Auth\LoginController@logout');
 });
 
 Route::group(['middleware' => ['cors', 'auth:api']], function (){
+    Route::resource('group', 'GroupController');
     Route::resource('user', 'UserController');
     Route::resource('company', 'Catalogs\CompanyController');
     Route::resource('contractTypes', 'Catalogs\ContractTypesController');
@@ -30,6 +33,10 @@ Route::group(['middleware' => ['cors', 'auth:api']], function (){
     Route::resource('departments', 'Catalogs\DepartmentController');
     Route::resource('jobs', 'Catalogs\JobsController');
     Route::resource('work', 'WorkController');
+
+    Route::get('catalogCompanies', 'SharedController@getCompanyCatalogFromUser');
+    Route::get('catalogCompaniesDepartments', 'SharedController@getCompanyCatalogFromUserDepartments');
 });
+
 
 

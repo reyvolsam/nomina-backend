@@ -19,6 +19,7 @@ class ContractTypesController extends Controller
     {
         $this->request = $request;
         $this->res['message'] = '';
+        $this->res['data'] = [];
         $this->status_code = 204;
 
         date_default_timezone_set('America/Mexico_City');
@@ -33,7 +34,7 @@ class ContractTypesController extends Controller
     {
         try{
             $contract_type_list = [];
-            $contract_type_list = ContractTypes::all();
+            $contract_type_list = ContractTypes::with('Company')->get();
 
             if(count($contract_type_list) > 0){
                 foreach ($contract_type_list as $kc => $vc) $vc->loader = false;
@@ -72,6 +73,7 @@ class ContractTypesController extends Controller
         try{
             $validator = Validator::make($this->request->all(), [
                 'name'          => 'required|max:255',
+                'company_id'    => 'required'
             ]);
 
             if(!$validator->fails()) {
@@ -147,7 +149,8 @@ class ContractTypesController extends Controller
         try{
             if(is_numeric($id)){
                 $validator = Validator::make($this->request->all(), [
-                    'name'          => 'required|max:255'
+                    'name'          => 'required|max:255',
+                    'company_id'    => 'required'
                 ]);
 
                 if(!$validator->fails()) {

@@ -12,4 +12,8 @@ class DiscountTypes extends Model
     protected $fillable = ['name', 'company_id', 'created_at', 'updated_at'];
     protected $guarded = ['id'];
     protected $dates = ['deleted_at'];
+
+    public function Company(){
+        return $this->belongsTo('App\Company');
+    }
 }

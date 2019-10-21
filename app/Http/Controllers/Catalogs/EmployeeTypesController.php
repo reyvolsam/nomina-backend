@@ -18,6 +18,7 @@ class EmployeeTypesController extends Controller
     {
         $this->request = $request;
         $this->res['message'] = '';
+        $this->res['data'] = [];
         $this->status_code = 204;
 
         date_default_timezone_set('America/Mexico_City');
@@ -32,7 +33,7 @@ class EmployeeTypesController extends Controller
     {
         try{
             $employee_types_list = [];
-            $employee_types_list = EmployeeTypes::all();
+            $employee_types_list = EmployeeTypes::with('Company')->get();
 
             if(count($employee_types_list) > 0){
                 foreach ($employee_types_list as $kc => $vc) $vc->loader = false;
@@ -70,7 +71,8 @@ class EmployeeTypesController extends Controller
     {
         try{
             $validator = Validator::make($this->request->all(), [
-                'name'          => 'required|max:255'
+                'name'          => 'required|max:255',
+                'company_id'    => 'required'
             ]);
 
             if(!$validator->fails()) {
@@ -146,7 +148,8 @@ class EmployeeTypesController extends Controller
         try{
             if(is_numeric($id)){
                 $validator = Validator::make($this->request->all(), [
-                    'name'          => 'required|max:255'
+                    'name'          => 'required|max:255',
+                    'company_id'    => 'required'
                 ]);
 
                 if(!$validator->fails()) {

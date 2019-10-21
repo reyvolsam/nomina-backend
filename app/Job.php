@@ -9,7 +9,7 @@ class Job extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name', 'department_id', 'created_at', 'updated_at'];
+    protected $fillable = ['name', 'department_id', 'company_id', 'created_at', 'updated_at'];
     protected $guarded = ['id'];
     protected $dates = ['deleted_at'];
 
@@ -17,4 +17,10 @@ class Job extends Model
     {
         return $this->belongsTo('App\Department');
     }//Department
+
+    public function Company()
+    {
+        return $this->belongsTo('App\Company');
+    }//Department
+
 }

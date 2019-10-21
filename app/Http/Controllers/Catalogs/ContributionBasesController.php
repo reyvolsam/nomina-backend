@@ -17,6 +17,7 @@ class ContributionBasesController extends Controller
     {
         $this->request = $request;
         $this->res['message'] = '';
+        $this->res['data'] = [];
         $this->status_code = 204;
 
         date_default_timezone_set('America/Mexico_City');
@@ -31,7 +32,7 @@ class ContributionBasesController extends Controller
     {
         try {
             $contribution_bases_list = [];
-            $contribution_bases_list = ContributionBases::all();
+            $contribution_bases_list = ContributionBases::with('Company')->get();
 
             if(count($contribution_bases_list) > 0){
                 foreach ($contribution_bases_list as $kc => $vc) $vc->loader = false;
@@ -70,6 +71,7 @@ class ContributionBasesController extends Controller
         try{
             $validator = Validator::make($this->request->all(), [
                 'name'          => 'required|max:255',
+                'company_id'    => 'required'
             ]);
 
             if(!$validator->fails()) {
@@ -145,7 +147,8 @@ class ContributionBasesController extends Controller
         try{
             if(is_numeric($id)){
                 $validator = Validator::make($this->request->all(), [
-                    'name'          => 'required|max:255'
+                    'name'          => 'required|max:255',
+                    'company_id'    => 'required'
                 ]);
 
                 if(!$validator->fails()) {

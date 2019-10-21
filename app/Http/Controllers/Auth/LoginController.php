@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\CompanyUser;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -66,19 +67,21 @@ class LoginController extends Controller
                             'password'      => 'required'
             ], $messages);
 
-            $usr = User::where('email', 'LIKE', $this->request->input('email'))->first();
+            $usr = User::with(['Company' =>
+                        function ($query){
+                            $query->select('user_id', 'id');
+                        }])
+                        ->where('email', 'LIKE', $this->request->input('email'))->first();
 
             if($usr){
                 if(!$validator->fails()) {
-                    $actusr = User::where('email', 'LIKE', $this->request->input('email'))->where('active', '=', 1)->first();
-
-                    if($actusr){
+                    if($usr->active == 1){
                         if(Auth::attempt(['email' => $this->request->input('email'), 'password' =>  $this->request->input('password')])) {
-
-                            $this->res['profile_id'] = \Auth::getUser()->group_id;
-                            $this->res['name'] = \Auth::getUser()->name;
-                            $this->res['email'] = \Auth::getUser()->email;
-                            $this->res['avatar'] = \Auth::getUser()->avatar;
+                            //$this->res['companies'] = $usr->Company;
+                            $this->res['profile_id'] = $this->request->user()->group_id;
+                            $this->res['name'] = $this->request->user()->name;
+                            $this->res['email'] = $this->request->user()->email;
+                            $this->res['avatar'] = $this->request->user()->avatar;
 
                             $user = $this->request->user();
                             $tokenResult = $user->createToken('Personal Access Token');

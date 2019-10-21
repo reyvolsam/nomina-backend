@@ -17,6 +17,7 @@ class PeriodTypesController extends Controller
     {
         $this->request = $request;
         $this->res['message'] = '';
+        $this->res['data'] = [];
         $this->status_code = 204;
 
         date_default_timezone_set('America/Mexico_City');
@@ -31,7 +32,7 @@ class PeriodTypesController extends Controller
     {
         try{
             $period_types_list = [];
-            $period_types_list = PeriodTypes::all();
+            $period_types_list = PeriodTypes::with('Company')->get();
 
             if(count($period_types_list) > 0){
                 foreach ($period_types_list as $kc => $vc) $vc->loader = false;
@@ -70,6 +71,7 @@ class PeriodTypesController extends Controller
         try{
             $validator = Validator::make($this->request->all(), [
                 'name'          => 'required|max:255',
+                'company_id'    => 'required',
             ]);
 
             if(!$validator->fails()) {
@@ -145,7 +147,8 @@ class PeriodTypesController extends Controller
         try{
             if(is_numeric($id)){
                 $validator = Validator::make($this->request->all(), [
-                    'name'          => 'required|max:255'
+                    'name'          => 'required|max:255',
+                    'company_id'    => 'required',
                 ]);
 
                 if(!$validator->fails()) {

@@ -19,6 +19,7 @@ class DepartmentController extends Controller
     {
         $this->request = $request;
         $this->res['message'] = '';
+        $this->res['data'] = [];
         $this->status_code = 204;
 
         date_default_timezone_set('America/Mexico_City');
@@ -33,7 +34,7 @@ class DepartmentController extends Controller
     {
         try{
             $departments_list = [];
-            $departments_list = Department::all();
+            $departments_list = Department::with('Company')->get();
 
             if(count($departments_list) > 0){
                 foreach ($departments_list as $kc => $vc) $vc->loader = false;
