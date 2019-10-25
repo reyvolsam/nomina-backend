@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Validator;
 use App\CompanyUser;
 use App\User;
+use Illuminate\Database\Query\Builder;
 
 class UserController extends Controller
 {
@@ -53,6 +54,39 @@ class UserController extends Controller
         return response()->json($this->res, $this->status_code);
     }
 
+    public function searchCompanies()
+    {
+        try{
+            $company = $this->request->input('company');
+            $companies_list = [];
+            
+            //ROOT
+            if($this->request->user()->group_id == 4){
+                $companies_list = User::where('name', 'LIKE', $company)->get();
+            }
+            //ADMINISTRATOR
+            if($this->request->user()->group_id == 1){
+                $posts = User::whereHas('Company', function (Builder $query) use ($company){
+                    $query->where('name', 'LIKE', $company.'%');
+                }, '>=', 10)->get();
+            }
+            
+            $this->res['cosa'] = $this->request->user()->group_id;
+            if(count($companies_list) > 0){
+                $this->res['data'] = $companies_list;
+                $this->status_code = 200;
+            } else {
+                $this->status_code = 200;
+                $this->res['message'] = 'No hay empresas con el criterio de busqueda indicado.';
+            }
+
+        } catch(\Exception $e) {
+            $this->res['message'] = 'Error en la Base de Datos.'.$e;
+            $this->status_code = 500;
+        }
+        return response()->json($this->res, $this->status_code);
+    }//searchCompanies
+    
     /**
      * Show the form for creating a new resource.
      *
