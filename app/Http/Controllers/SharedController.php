@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
+use App\User;
 use App\Company;
 use App\CompanyUser;
 use App\Department;
@@ -35,7 +36,7 @@ class SharedController extends Controller
         $res['status'] = false;
         $res['status_code'] = 204;
         $res['message'] = '';
-        $res['data'] = '';
+        $res['data'] = [];
 
         try{
             $user = $this->request->user();
@@ -48,7 +49,7 @@ class SharedController extends Controller
                     $res['status_code'] = 200;
                 } else {
                     $res['message'] = $resCatalog['message'];
-                    $res['status_code'] = 500;
+                    $res['status_code'] = 201;
                 }
             } else {
                 $res['message'] = 'No tiene asignado ninguna empresa';
@@ -65,6 +66,7 @@ class SharedController extends Controller
         $res = [];
         $res['status'] = false;
         $res['companies'] = [];
+        $res['message'] = '';
 
         try {
             $companies = [];
@@ -77,9 +79,13 @@ class SharedController extends Controller
 
             //ADMINISTRATOR
             if($user->group_id == 1){
-                $user_companies = CompanyUser::where('user_id', $user->id)->get();
-                $companies = Company::where($user_companies)->get();
-                $res['status'] = true;
+                $companies = User::whereHas('Company')->where('id', $user->id)->get();
+                if(count($companies)){
+                    $res['status'] = true;
+                    $this->res['datas'] = $companies;
+                } else {
+                    $res['message'] = 'El usuario no tiene asignado ninguna empresa.';
+                }
             }
 
             //OTROS

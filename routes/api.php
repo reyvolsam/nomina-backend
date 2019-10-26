@@ -20,8 +20,10 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::group(['middleware' => ['cors', 'auth:api']], function (){
     Route::resource('group', 'GroupController');
-    Route::get('user/searchCompany', 'UserController@searchCompanies');
+
+    Route::post('user/searchCompany/{company}', 'UserController@searchCompanies');
     Route::resource('user', 'UserController');
+    
     Route::resource('company', 'Catalogs\CompanyController');
     Route::resource('contractTypes', 'Catalogs\ContractTypesController');
     Route::resource('contributionBases', 'Catalogs\ContributionBasesController');
