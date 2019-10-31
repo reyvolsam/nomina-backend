@@ -32,7 +32,17 @@ class CompanyController extends Controller
     {
         try{
             $companies_list = [];
-            $companies_list = Company::all();
+
+            //ROOT
+            if($this->request->user()->group_id == 4){
+                $companies_list = Company::all();
+            }
+            
+            //ADMINISTRADOR
+            if($this->request->user()->group_id == 1){
+                $user = User::find($this->request->user()->id);
+                $companies_list = $user->CompanyUser()->get();
+            }
 
 
             if(count($companies_list) > 0){
@@ -79,14 +89,14 @@ class CompanyController extends Controller
 
             if(!$validator->fails()) {
                 $name = $this->request->input('name');
-
+                $company_id = null;
                 $company_repeated = Company::where('name', $name)->count();
                 if($company_repeated == 0){
                     $company_trash = Company::withTrashed()->where('name', $name)->count();
 
                     if($company_trash == 0){
                         $company = new Company;
-                        $company->create($this->request->all());
+                        $company_id = $company->create($this->request->all())->id;
 
                         $this->res['message'] = 'Empresa creada correctamente.';
                         $this->status_code = 200;
@@ -94,12 +104,41 @@ class CompanyController extends Controller
                         Company::withTrashed()->where('name', $name)->restore();
 
                         $company = Company::where('name', $name)->first();
+                        $company_id = $company->id;
 
                         $company->updateOrCreate(['id' => $company->id], $this->request->all());
 
                         $this->res['message'] = 'Empresa restaurado correctamente.';
                         $this->status_code = 422;
                     }
+                    
+                    if($this->request->user()->group_id == 4){
+                        $user_id = $this->request->user()->id;
+
+                        if($company_id != null){
+                            $company_count = CompanyUser::where('id', $company_id)
+                                                        ->where('user_id', $user_id)
+                                                        ->count();
+                            if($company_count == 0){
+                                $company_trash = CompanyUser::withTrashed()
+                                                            ->where('id', $company_id)
+                                                            ->where('user_id', $user_id)
+                                                            ->count();
+
+                                if($company_trash == 0){
+                                    $company_user = new CompanyUser;
+                                    $company_user->company_id = $company_id;
+                                    $company_user->user_id = $user_id;
+                                } else {
+                                    CompanyUser::withTrashed()
+                                                    ->where('id', $company_id)
+                                                    ->where('user_id', $user_id)
+                                                    ->restore()();
+                                }
+                            }
+                        }
+                    }
+
                 } else {
                     $this->res['message'] = 'La Empresa ya existe.';
                     $this->status_code = 423;
