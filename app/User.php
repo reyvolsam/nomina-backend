@@ -51,6 +51,10 @@ class User extends Authenticatable
         return $this->hasMany('App\CompanyUser');
     }
 
+    public function assigned_companies(){
+        return $this->belongsToMany('App\Company', 'company_users');
+    }
+
     public function CompanyUser(){
         return $this->belongsToMany('App\Company', 'company_users');
     }
